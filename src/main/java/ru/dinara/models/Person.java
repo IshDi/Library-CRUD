@@ -1,21 +1,31 @@
 package ru.dinara.models;
 
 public class Person {
+    private int id;
     private String fullName;
     private int yearOfBirth;
 
     public Person() {}
 
-    public Person(String fullName, int yearOfBirth) {
+    public Person(int id, String fullName, int yearOfBirth) {
+        this.id = id;
         this.fullName = fullName;
         this.yearOfBirth = yearOfBirth;
     }
 
-    public String getName() {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getFullName() {
         return fullName;
     }
 
-    public void setName(String fullName) {
+    public void setFullName(String fullName) {
         this.fullName = fullName;
     }
 
