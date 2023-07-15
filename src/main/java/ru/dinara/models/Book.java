@@ -1,9 +1,26 @@
 package ru.dinara.models;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
+import org.springframework.format.annotation.DateTimeFormat;
+
 public class Book {
     private int id;
+
+    @NotEmpty(message = "Поле не может быть пустым")
+    @Size(min = 2, max = 100, message = "Допустимое количество символом (min - 2, max - 100)")
     private String name;
+
+    @NotEmpty(message = "Поле не может быть пустым")
+    @Size(min = 2, max = 100, message = "Допустимое количество символом (min - 2, max - 100)")
     private String author;
+
+    @NotEmpty(message = "Поле не может быть пустым")
+    @Min(value = 0000, message = "Нужно ввести верный год в формате yyyy")
+    @DateTimeFormat(pattern = "yyyy")
+    @Past(message = "Превышение по текущему году")
     private int year;
 
     public Book(int id, String name, String author, int year) {

@@ -1,8 +1,10 @@
 package ru.dinara.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.dinara.dao.PersonDAO;
 import ru.dinara.models.Person;
@@ -35,7 +37,12 @@ public class PeopleController {
     }
 
     @PostMapping()
-    public String create(@ModelAttribute("person") Person person) {
+    public String create(@ModelAttribute("person") @Valid Person person,
+                         BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "people/new";
+        }
         personDAO.save(person);
         return "redirect:/people";
     }
@@ -47,7 +54,13 @@ public class PeopleController {
     }
 
     @PatchMapping("/{id}")
-    public String update(@PathVariable("id") int id, @ModelAttribute("person") Person person){
+    public String update(@PathVariable("id") int id,
+                         @ModelAttribute("person") @Valid Person person,
+                         BindingResult bindingResult){
+        if (bindingResult.hasErrors()) {
+            return "people/edit";
+        }
+
         personDAO.update(id, person);
         return "redirect:/people";
     }
