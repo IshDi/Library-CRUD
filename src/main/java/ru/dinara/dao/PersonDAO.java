@@ -39,4 +39,9 @@ public class PersonDAO {
         person.setYearOfBirth(updatedPerson.getYearOfBirth());
     }
 
+    public void delete(int id) {
+        Person person = show(id);
+        people.remove(person);
+    }
+
 }
