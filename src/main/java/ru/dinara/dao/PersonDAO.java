@@ -33,4 +33,10 @@ public class PersonDAO {
         people.add(new Person(++PEOPLE_COUNT, person.getFullName(), person.getYearOfBirth()));
     }
 
+    public void update(int id, Person updatedPerson) {
+        Person person = show(id);
+        person.setFullName(updatedPerson.getFullName());
+        person.setYearOfBirth(updatedPerson.getYearOfBirth());
+    }
+
 }
