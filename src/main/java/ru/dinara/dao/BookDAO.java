@@ -31,5 +31,8 @@ public class BookDAO {
         return books.stream().filter(book -> book.getId() == id).findAny().orElse(null);
     }
 
+    public void save(Book book) {
+        books.add(new Book(++BOOK_COUNT, book.getName(), book.getAuthor(), book.getYear()));
+    }
 
 }
