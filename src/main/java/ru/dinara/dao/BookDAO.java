@@ -35,4 +35,11 @@ public class BookDAO {
         books.add(new Book(++BOOK_COUNT, book.getName(), book.getAuthor(), book.getYear()));
     }
 
+    public void update(int id, Book updatedBook) {
+        Book book = show(id);
+        book.setName(updatedBook.getName());
+        book.setAuthor(updatedBook.getAuthor());
+        book.setYear(updatedBook.getYear());
+    }
+
 }
