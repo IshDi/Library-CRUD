@@ -42,4 +42,9 @@ public class BookDAO {
         book.setYear(updatedBook.getYear());
     }
 
+    public void delete(int id) {
+        Book book = show(id);
+        books.remove(book);
+    }
+
 }
