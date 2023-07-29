@@ -1,50 +1,58 @@
 package ru.dinara.dao;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.dinara.models.Book;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class BookDAO {
-    private static int BOOK_COUNT;
+    private final JdbcTemplate jdbcTemplate;
 
-    private List<Book> books;
-
-    {
-        books = new ArrayList<>();
-
-        books.add(new Book(++BOOK_COUNT, "Вселенная", "Иванов Иван", 1920));
-        books.add(new Book(++BOOK_COUNT, "Вселенная1", "Иванов Иван1", 1930));
-        books.add(new Book(++BOOK_COUNT, "Вселенная2", "Иванов Иван2", 1940));
-        books.add(new Book(++BOOK_COUNT, "Вселенная3", "Иванов Иван3", 1950));
-        books.add(new Book(++BOOK_COUNT, "Вселенная4", "Иванов Иван4", 1960));
-        books.add(new Book(++BOOK_COUNT, "Вселенная5", "Иванов Иван5", 1970));
+    @Autowired
+    public BookDAO(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Book> index() {
-        return books;
+    public List<Book> index(){
+        return jdbcTemplate.query("SELECT * FROM Book", new BeanPropertyRowMapper<>(Book.class));
     }
 
     public Book show(int id) {
-        return books.stream().filter(book -> book.getId() == id).findAny().orElse(null);
+        return jdbcTemplate.query(
+                "SELECT * FROM Book WHERE id=?",
+                new Object[]{id},
+                new BeanPropertyRowMapper<>(Book.class)
+        ).stream().findAny().orElse(null);
     }
 
     public void save(Book book) {
-        books.add(new Book(++BOOK_COUNT, book.getName(), book.getAuthor(), book.getYear()));
+        jdbcTemplate.update(
+                "INSERT INTO Book(name, author, year) VALUES(?, ?, ?)",
+                book.getName(),
+                book.getAuthor(),
+                book.getYear()
+        );
     }
 
     public void update(int id, Book updatedBook) {
-        Book book = show(id);
-        book.setName(updatedBook.getName());
-        book.setAuthor(updatedBook.getAuthor());
-        book.setYear(updatedBook.getYear());
+        jdbcTemplate.update(
+                "UPDATE Book SET name=?, author=?, year=? WHERE id=?",
+                updatedBook.getName(),
+                updatedBook.getAuthor(),
+                updatedBook.getYear(),
+                id
+        );
     }
 
     public void delete(int id) {
-        Book book = show(id);
-        books.remove(book);
+        jdbcTemplate.update(
+                "DELETE FROM Book WHERE id=?",
+                id
+        );
     }
 
 }
