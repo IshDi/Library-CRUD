@@ -1,47 +1,58 @@
 package ru.dinara.dao;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.dinara.models.Person;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class PersonDAO {
-    private static int PEOPLE_COUNT;
-    private List<Person> people;
+    private final JdbcTemplate jdbcTemplate;
 
-    {
-        people = new ArrayList<>();
-        people.add(new Person(++PEOPLE_COUNT, "Tom Tom Tom", 2010));
-        people.add(new Person(++PEOPLE_COUNT, "Tom1 Tom Tom", 2015));
-        people.add(new Person(++PEOPLE_COUNT, "Tom2 Tom Tom", 2016));
-        people.add(new Person(++PEOPLE_COUNT, "Tom3 Tom Tom", 2017));
-        people.add(new Person(++PEOPLE_COUNT, "Tom4 Tom Tom", 2018));
-        people.add(new Person(++PEOPLE_COUNT, "Tom5 Tom Tom", 2019));
+    @Autowired
+    public PersonDAO(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Person> index() {
-        return people;
+    public List<Person> index(){
+        return jdbcTemplate.query("SELECT * FROM Person", new BeanPropertyRowMapper<>(Person.class));
     }
 
     public Person show(int id) {
-        return people.stream().filter(person -> person.getId() == id).findAny().orElse(null);
+        return jdbcTemplate.query(
+                "SELECT * FROM Person WHERE id=?",
+                new Object[]{id},
+                new BeanPropertyRowMapper<>(Person.class)
+        ).stream().findAny().orElse(null);
     }
 
     public void save(Person person) {
-        people.add(new Person(++PEOPLE_COUNT, person.getFullName(), person.getYearOfBirth()));
+        jdbcTemplate.update(
+                "INSERT INTO Person(fullName, yearOfBirth) VALUES(?, ?)",
+                person.getFullName(),
+                person.getYearOfBirth()
+        );
     }
 
     public void update(int id, Person updatedPerson) {
-        Person person = show(id);
-        person.setFullName(updatedPerson.getFullName());
-        person.setYearOfBirth(updatedPerson.getYearOfBirth());
+        jdbcTemplate.update(
+                "UPDATE Person SET fullName=?, yearOfBirth=? WHERE id=?",
+                updatedPerson.getFullName(),
+                updatedPerson.getYearOfBirth(),
+                id
+        );
     }
 
     public void delete(int id) {
-        Person person = show(id);
-        people.remove(person);
+        jdbcTemplate.update(
+                "DELETE FROM Person WHERE id=?",
+                id
+        );
     }
-
 }
